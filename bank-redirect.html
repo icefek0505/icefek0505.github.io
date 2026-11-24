@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>MyFinance</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: #F4F5F2; color: #16201B; margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 16px; box-sizing: border-box; }
+  .card { background: #fff; border-radius: 20px; padding: 28px 24px; max-width: 420px; width: 100%; text-align: center; box-shadow: 0 8px 30px rgba(11, 26, 18, .08); }
+  h1 { font-size: 20px; margin: 4px 0 8px; }
+  p { color: #5B6475; line-height: 1.5; margin: 0 0 16px; }
+  a.button { display: block; background: #14644B; color: #fff; text-decoration: none; padding: 15px 22px; border-radius: 14px; font-weight: 700; font-size: 16px; }
+  @media (prefers-color-scheme: dark) {
+    body { background: #0E1311; color: #ECF1EE; }
+    .card { background: #171D1A; box-shadow: none; }
+    p { color: #9AA6A0; }
+  }
+</style>
+</head>
+<body>
+<div class="card">
+  <h1 id="title">Возвращаю в MyFinance…</h1>
+  <p id="text">Если приложение не открылось само, нажмите кнопку.</p>
+  <a class="button" id="back" href="myfinance://bank-callback">Открыть MyFinance</a>
+</div>
+<script>
+  // The bank sends the answer here as ?code=…&state=… (or ?error=…). This page only hands it to
+  // the MyFinance app on the same phone; nothing is stored or sent anywhere else.
+  var query = location.search || '';
+  var appLink = 'myfinance://bank-callback' + query;
+  var button = document.getElementById('back');
+  if (/Android/i.test(navigator.userAgent)) {
+    // Chrome on Android opens apps most reliably through an intent link.
+    button.href = 'intent://bank-callback' + query + '#Intent;scheme=myfinance;package=com.myfinance.app;end';
+  } else {
+    button.href = appLink;
+  }
+  if (!query) {
+    document.getElementById('title').textContent = 'MyFinance';
+    document.getElementById('text').textContent = 'Эта страница возвращает в приложение MyFinance после входа в банк.';
+  } else {
+    location.replace(appLink);
+  }
+</script>
+</body>
+</html>
